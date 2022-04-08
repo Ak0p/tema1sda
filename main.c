@@ -18,6 +18,8 @@ typedef struct {
 } TMic;
 
 TMic *alocMic(char*);
+int cmpLen(void *, void *);
+int cmpAlf(void *, void *);
 
 int codHash(void * element) {
 	char *cuvant = (char*) element;
@@ -63,90 +65,46 @@ void newAfiTH(TH* ah,TF afi_elem)
     }
 }
 
-// int MegaIns(TH *a, void* ae, TFCmp fcmpAlf, TFCmp fcmpLen, TFHash fh) {
-//   char * cuvant = (char*)ae;
-//   TMic *infocuv = (TMic*)calloc(1, sizeof(TMic));
-//   infocuv->word = (char*)calloc(1, strlen(cuvant));
-//   infocuv->count = 1;
-//   strcpy(infocuv->word, cuvant);   // alocare info pentru lista #2
-//   if (!a->v[fh(cuvant)]->urm) {
-//
-//     // daca nu exista un element in lista #1 adaug unul cu lenght strlen(infocuv.word)
-//
-//     TMare *element = (TMare*)calloc(1, sizeof(TMare));
-//     element->lenght = strlen(infocuv->word);
-//     element->l = (TLG)calloc(1, sizeof(TLG));  // alocare info lista #!
-//     if (!Ins_IncLG(&element->l, &infocuv)) {
-//       printf("Eroare alocare element_2\n");
-//       return 0;
-//     }  // asociere cel lista #2 cu info lista #1
-//     // a->v[fh(cuvant)] = element.l;
-//     if (!Ins_IncLG(&a->v[fh(cuvant)], &element)) {
-//       printf("Eroare alocare element_1\n");
-//       return 0;
-//     }   // alocare celula prelucrata in lista #1
-//     return 1;
-//   } else {
-//     TLG *p = &a->v[fh(cuvant)];
-//     TLG *u = NULL;
-//     for(;(*p) != NULL || (*p)->info->lenght > element->lenght ; (*p) = (*p)->urm) {
-//       // iterez print elementele listei #1 pentru a gasi elementul cu lungimea <= cu a infocuv.word
-//       if(*p->urm) {  // daca exista urmatorul element si strlen(infocuv.word se afla in intervalul deschis dintre celule adaug o noua celula)
-//         if (element->lenght > *p->info->lenght && element->lenght < *p->urm->info->lenght) {
-//           if (!Ins_IncLG(p->l, &infocuv)) {
-//             printf("Eroare alocare element_2\n");
-//             return 0;
-//           }  // asociere cel lista #2 cu info lista #1
-//
-//        }
-//      } else if (element.lenght == (*p)->info->lenght) {
-//       u = (*p)->info->l;
-//       for(;u != NULL; u = u->urm) {
-//         if (strcmp(infocuv.word, *u->info->word) == 0) {
-//           *u->info->count++;
-//         } else {
-//           Ins_IncLG(&u, infocuv);
-//         }
-//       }
-//     }
-//     }
-//   }
-// }
-
 int InserareEl(TH*a, void *ae, TFCmp fcmpAlf, TFCmp fcmpLen, TFHash fh) {
   char * cuvant = (char*)ae;
+      printf("%s\n", cuvant);
   // TMic *infocuv = (TMic*)calloc(1, sizeof(TMic));
   // infocuv->word = (char*)calloc(1, strlen(cuvant));
   // infocuv->count = 1;
   // strcpy(infocuv->word, cuvant);   // alocare info pentru lista #2
 
-  if (!a->v[fh(cuvant)]->urm) { // daca nu exista lista mare
+  if (!a->v[fh(cuvant)]) { // daca nu exista lista mare
     TMare *element = (TMare*)calloc(1, sizeof(TMare));
-    element->lenght = strlen(cuvant);
+    element->lenght = (int)strlen(cuvant);
     element->l = (TLG)calloc(1, sizeof(TLG));  // alocare info lista #!
-    if(!Ins_IncLG(&a->v[fh(cuvant)], element)) {
+    if(!Ins_IncLG(&a->v[fh(cuvant)], (TMare*)element)) {
       return 0;
     }
+    printf("Func 3\n");
     TMic *infocuv = (TMic*)calloc(1, sizeof(TMic));
     infocuv->word = (char*)calloc(1, strlen(cuvant));
     infocuv->count = 1;
     strcpy(infocuv->word, cuvant);
     TMare * pointerUseless = (TMare*) a->v[fh(cuvant)]->info;   // alocare info pentru lista #2
-    if(!Ins_IncLG(&(pointerUseless->l), infocuv)) {
+    if(!Ins_IncLG(&(pointerUseless->l), (TMic*)infocuv)) {
       pointerUseless = NULL;
       return 0;
     }
     pointerUseless = NULL;
     return 1;
   }
-  TLG *p = (TLG*)a->v[fh(cuvant)];
-  for(; (*p) != NULL; (*p) = (*p)->urm) {
-    TMare *ponterMare = (TMare*)(*p)->info;
-    if ((long unsigned)ponterMare->lenght < strlen(cuvant)) {
-      ponterMare = (TMare*)(*p)->urm->info;
-      if((*p)->urm && (long unsigned)ponterMare->lenght <= strlen(cuvant))
-        continue;
+  TLG p = a->v[fh(cuvant)];
+  for(; p != NULL; p = p->urm) {
+    TMare *ponterMare = (TMare*)(p->info);
+    if (ponterMare->lenght < (int)strlen(cuvant)) {
+      printf("Func 5?\n");
+      if(p->urm) {
+        ponterMare = (TMare*)p->urm->info;
+        if(ponterMare->lenght <= (int)strlen(cuvant))
+          continue;
+      }
       else {
+        printf("Func 6.5?\n");
         TMic *infocuv = (TMic*)calloc(1, sizeof(TMic));
         infocuv->word = (char*)calloc(1, strlen(cuvant));
         infocuv->count = 1;
@@ -156,30 +114,33 @@ int InserareEl(TH*a, void *ae, TFCmp fcmpAlf, TFCmp fcmpLen, TFHash fh) {
         element->l = (TLG)calloc(1, sizeof(TLG));  // alocare info lista #!
         if(!Ins_IncLG(&element->l, infocuv))
           return 0;
-        if(!InsLG(p, element))
+        if(!InsLG(&p, element))
           return 0;
         return 1;
       }
 
     } else if ((long unsigned)ponterMare->lenght == strlen(cuvant)) {
+
       signed char val = 0;
-      TLG *u = &ponterMare->l;
-      for(; (*u) != NULL; (*u) = (*u)->urm) {
-        TMic *ponterMic = (TMic*)(*u)->info;
-        if(fcmpAlf(ponterMic->word, cuvant) == 0) {
+      TLG u = (TLG)ponterMare->l;
+      for(; u != NULL; u = u->urm) {
+        TMic *ponterMic = (TMic*)(u->info);
+        if(strcmp(ponterMic->word, cuvant) == 0) {
           val = 1;
           ponterMic->count++;
           return 1;
         }
       }
+      printf("Func 8?\n");
       if (val == 0) {
         TMic *infocuv = alocMic(cuvant);
-        if(!InsLG(u, infocuv))
+        if(!InsLG(&u, infocuv))
           return 0;
       }
       return 1;
 
     } else {
+      printf("Func 9?\n");
       TMic *infocuv = (TMic*)calloc(1, sizeof(TMic));
       infocuv->word = (char*)calloc(1, strlen(cuvant));
       infocuv->count = 1;
@@ -189,7 +150,7 @@ int InserareEl(TH*a, void *ae, TFCmp fcmpAlf, TFCmp fcmpLen, TFHash fh) {
       element->l = (TLG)calloc(1, sizeof(TLG));  // alocare info lista #!
       if(!Ins_IncLG(&element->l, infocuv))
         return 0;
-      if(!Ins_IncLG(p, element))
+      if(!Ins_IncLG(&p, element))
         return 0;
       return 1;
     }
@@ -229,8 +190,8 @@ void afisareElement(void * element) {
 // }
 
 int cmpLen(void * e1, void * e2) {
-	char * info1 = (char *) e1;
-	char * info2 = (char *) e2;
+	TMic * info1 = (TMic *) e1;
+	TMic * info2 = (TMic *) e2;
 
 	if (strlen(info1) - strlen(info2) != 0)
 		return 0;
@@ -242,13 +203,14 @@ int cmpAlf(void * e1, void * e2)
 {
 	TMic * info1 = (TMic *) e1;
 	TMic * info2 = (TMic *) e2;
-
-	if (strcmp(info1->word, info2->word) != 0)
+	if (strcmp(info1->word, info2->word) != 0) {
+  printf("cccccc\n");
 		return 0;
+    }
 	return 1;
 }
 
-TH * GenerareHash(TLG listacuvinte) {
+TH * oldGenerareHash(TLG listacuvinte) {
     TH *h = NULL;
 	TLG p;
     TMare * el;
@@ -277,10 +239,30 @@ TH * GenerareHash(TLG listacuvinte) {
   return h;
 }
 
-int main(int argc, char *argv[]) {
-  //InitTH('Z' - 'A' + 1, codHash);
-  FILE *input;
+TH * GenerareHash() {
+    TH *h = NULL;
+	TLG p;
+    TMare * el;
+	int rez;
 
+	/* calcul dimensiuni maxime pt tabela hash */
+	size_t M = ('Z'-'A');
+
+	/* initializare tabela hash */
+	h = (TH *) InitTH(M, codHash);
+	if(h == NULL)
+		return NULL;
+
+    for(int i = 0; i < (int)M; i++) {
+      h->v[i] = NULL;
+    }
+  return h;
+}
+
+int main(int argc, char *argv[]) {
+  TH h;
+  h = *InitTH('Z' - 'A', codHash);
+  FILE *input;
   input = fopen(argv[1], "r");
 
   while(1) {
@@ -288,24 +270,28 @@ int main(int argc, char *argv[]) {
     char *comanda = (char*)calloc(lineSize, sizeof(char));
     char **cuvant = (char**)calloc(wordSize, sizeof(char*));
     int contor1 = 0;
-    if(!fgets(comanda, lineSize, input))
+    if(!fgets(comanda, lineSize, input)) {
+      fclose(input);
       return 0;
+    }
     cuvant[contor1] = strtok(comanda, " .,\n");
     while (cuvant[contor1]) {
-      printf("%d - %s\n", contor1, cuvant[contor1]);
+      // printf("%d - %s\n", contor1, cuvant[contor1]);
       contor1++;
       cuvant[contor1] = strtok(NULL, " .,\n");
       // end citire & prelucrare comanda
       // start insert block
       if (strcmp(cuvant[0], "insert") == 0) {
-        // int i = 1;
-        // while(cuvant[i]) {
-        //   if(strlen(cuvant[i]) <= 3)
-        //     continue;
-        //     //if()
-        //   i++;
-        // }
+          if(strlen(cuvant[contor1]) < 3)
+            continue;
+
+          if(!InserareEl(&h, cuvant[contor1], cmpAlf, cmpLen, codHash)) {
+            printf("Inserare nereușita\n");
+            return -1;
+          }
       }
+    }
+
 
       // end insert block
       // start print block
@@ -315,8 +301,6 @@ int main(int argc, char *argv[]) {
       }
 
     }
-
+    fclose(input);
+    return 0;
   }
-  fclose(input);
-  return 0;
-}
