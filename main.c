@@ -259,6 +259,31 @@ TH * GenerareHash() {
   return h;
 }
 
+int bobelsort(TLG *l) {
+  TLG p = *l, ant = *l, aux;
+  int ok = 0;
+  while(!ok) {
+    ant = *l;
+    p = *l;
+    for(;p != NULL && p->urm != NULL; p = p->urm) {
+      if(ant == p)
+        continue;
+      else
+        ant->urm = p;
+      if((int)(p->(TMic*)(info)->count) < (int)(p->urm->(TMic*)(info)->count))) {
+
+        ant->urm = p->urm;
+        aux = p->urm->urm;
+        p->urm->urm = p;
+        p->urm = aux;
+
+      } else if (p->info->count > p->info->urm->count)  // castari????
+        ok = 1;
+    }
+  }
+  return 1;
+}
+
 int main(int argc, char *argv[]) {
   TH h;
   h = *InitTH('Z' - 'A', codHash);
