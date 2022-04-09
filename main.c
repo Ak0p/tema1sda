@@ -301,7 +301,17 @@ int bobelsort(TLG *l) {
         p->urm->urm = p;
         p->urm = aux;
 
-      } else if (infoActual->count > infoUrm->count)  // castari????
+      } else if(infoActual->count == infoUrm->count)  {
+        if(strcmp(infoActual->word, infoUrm->word) < 0) {
+          ok = 1;
+        } else {
+          ant->urm = p->urm;
+          aux = p->urm->urm;
+          p->urm->urm = p;
+          p->urm = aux;
+        }
+
+      } else if (infoActual->count > infoUrm->count)
         ok = 1;
     }
   }
