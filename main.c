@@ -345,7 +345,7 @@ int main(int argc, char *argv[]) {
       // end citire & prelucrare comanda
       // start insert block
       if (strcmp(cuvant[0], "insert") == 0) {
-          if(strlen(cuvant[contor1]) < 3) {
+          if(strlen(cuvant[contor1]) < 3 ||(*cuvant[contor1] < '9' && *cuvant[contor1] > '0')) {
             contor1++;
             cuvant[contor1]=strtok(NULL, " .,");
             continue;
