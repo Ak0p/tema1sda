@@ -20,6 +20,10 @@ typedef struct {
 TMic *alocMic(char*);
 int cmpLen(void *, void *);
 int cmpAlf(void *, void *);
+void AfiMic(TMic*);
+void AfiMare(TMare*);
+void newAfiTH(TH*);
+
 
 int codHash(void * element) {
 	char *cuvant = (char*) element;
@@ -36,30 +40,42 @@ int codHash(void * element) {
 void AfiMic(TMic *cel) {
 	printf("%s/%i", cel->word, cel->count);
 }
+
 void AfiMare(TMare *cel) {
+  // printf("nununu\n");
 	printf("(%i:", cel->lenght);
-	TLG *u = &cel->l;
-	for(; *u != NULL; *u = (*u)->urm) {
-		AfiMic((TMic*)(*u)->info);
-		if((*u)->urm)
+	TLG u = cel->l;
+  // printf("n-am idee\n");
+	for(; u != NULL; u = u->urm) {
+    // printf("\n ceva \n");
+    if(u->info)
+		  AfiMic((TMic*)u->info);
+		if(u->urm)
 			printf(", ");
 	}
-	if(!(*u)->urm)
-		printf(")");
-	else
-		printf(") ");
+   	printf(") ");
+	// if(!u->urm)
+	// 	printf(")");
+	// else
+	// 	printf(") ");
 }
 
-void newAfiTH(TH* ah,TF afi_elem)
+void newAfiTH(TH* ah)  //,TF AfiMare)
 {
     TLG p, el;
-    long unsigned i;
-    for(i = 0; i < ah->M; i++) {
+    for(int i = 0; i < (int)ah->M; i++) {
         p = ah->v[i];
+      //  printf("%p\n", p);
         if(p) {
-            printf("pos%lu: ",i);
-            for(el = p; el != NULL; el = el->urm)
-                AfiMare((TMare*)el->info);
+          //  printf("dadada\n");
+            printf("pos%d: ",i);
+            // printf("\nweee\n");
+            for(el = p; el != NULL; el = el->urm) {
+        //      printf("dadada\n");
+              AfiMare((TMare*)el->info);
+            }
+
+
             printf("\n");
         }
     }
@@ -67,7 +83,7 @@ void newAfiTH(TH* ah,TF afi_elem)
 
 int InserareEl(TH*a, void *ae, TFCmp fcmpAlf, TFCmp fcmpLen, TFHash fh) {
   char * cuvant = (char*)ae;
-      printf("%s\n", cuvant);
+      // printf("%s\n", cuvant);
   // TMic *infocuv = (TMic*)calloc(1, sizeof(TMic));
   // infocuv->word = (char*)calloc(1, strlen(cuvant));
   // infocuv->count = 1;
@@ -81,18 +97,18 @@ int InserareEl(TH*a, void *ae, TFCmp fcmpAlf, TFCmp fcmpLen, TFHash fh) {
       return 0;
     }
     a->v[fh(cuvant)]->urm = NULL;
-    printf("Nu exista el\n");
+  //  printf("Nu exista el\n");
     TMic *infocuv = (TMic*)calloc(1, sizeof(TMic));
     infocuv->word = (char*)calloc(1, strlen(cuvant));
     infocuv->count = 1;
     strcpy(infocuv->word, cuvant);
     TMare * pointerUseless = (TMare*) a->v[fh(cuvant)]->info;   // alocare info pentru lista #2
     if(!Ins_IncLG(&(pointerUseless->l), (TMic*)infocuv)) {
-      printf("Aci\n");
+    //  printf("Aci\n");
       free(pointerUseless);
       return 0;
     }
-    printf("Ori aci\n");
+//    printf("Ori aci\n");
     // pointerUseless = NULL;
     return 1;
   } else {
@@ -260,25 +276,25 @@ TH * oldGenerareHash(TLG listacuvinte) {
   return h;
 }
 
-TH * GenerareHash() {
-    TH *h = NULL;
-	TLG p;
-    TMare * el;
-	int rez;
-
-	/* calcul dimensiuni maxime pt tabela hash */
-	size_t M = ('Z'-'A');
-
-	/* initializare tabela hash */
-	h = (TH *) InitTH(M, codHash);
-	if(h == NULL)
-		return NULL;
-
-    for(int i = 0; i < (int)M; i++) {
-      h->v[i] = NULL;
-    }
-  return h;
-}
+// TH * GenerareHash() {
+//     TH *h = NULL;
+// 	TLG p;
+//     TMare * el;
+// 	int rez;
+//
+// 	/* calcul dimensiuni maxime pt tabela hash */
+// 	size_t M = ('Z'-'A');
+//
+// 	/* initializare tabela hash */
+// 	h = (TH *) InitTH(M, codHash);
+// 	if(h == NULL)
+// 		return NULL;
+//
+//     for(int i = 0; i < (int)M; i++) {
+//       h->v[i] = NULL;
+//     }
+//   return h;
+// }
 
 int bobelsort(TLG *l) {
   TLG p = *l, ant = *l, aux;
@@ -319,8 +335,8 @@ int bobelsort(TLG *l) {
 }
 
 int main(int argc, char *argv[]) {
-  TH h;
-  h = *InitTH('Z' - 'A', codHash);
+  TH *h = NULL;
+  h = InitTH('Z' - 'A', codHash);
   FILE *input;
   input = fopen(argv[1], "r");
 
@@ -345,8 +361,9 @@ int main(int argc, char *argv[]) {
     // }
     // contor1 = 0;
     while (cuvant[contor1]) {
-      printf("%d - %s\n", contor1, cuvant[contor1]);
-      if(contor1 == 0) {
+
+        // printf("%d - %s\n", contor1, cuvant[contor1]);
+      if(contor1 == 0 && strcmp(cuvant[0], "print")) {
         contor1++;
         cuvant[contor1]=strtok(NULL, " .,");
         continue;
@@ -361,8 +378,9 @@ int main(int argc, char *argv[]) {
             continue;
           }
 
-          printf("|%d\n", contor1);
-          if(!InserareEl(&h, cuvant[contor1], cmpAlf, cmpLen, codHash)) {
+          // printf("|%d\n", contor1);
+           printf("%d - %s\n", contor1, cuvant[contor1]);
+          if(!InserareEl(h, cuvant[contor1], cmpAlf, cmpLen, codHash)) {
             printf("Inserare nereușita\n");
             return -1;
           }
@@ -372,9 +390,10 @@ int main(int argc, char *argv[]) {
       // start print block
 
       if (strcmp(cuvant[0], "print") == 0) {
-        continue;
+         newAfiTH(h);
         contor1++;
         cuvant[contor1]=strtok(NULL, " .,");
+        continue;
       }
       contor1++;
       cuvant[contor1]=strtok(NULL, " .,");
