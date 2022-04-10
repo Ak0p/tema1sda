@@ -67,7 +67,7 @@ void newAfiTH(TH* ah,TF afi_elem)
 
 int InserareEl(TH*a, void *ae, TFCmp fcmpAlf, TFCmp fcmpLen, TFHash fh) {
   char * cuvant = (char*)ae;
-      printf("%s\n", cuvant);
+      printf("\n|%s|\n", cuvant);
   // TMic *infocuv = (TMic*)calloc(1, sizeof(TMic));
   // infocuv->word = (char*)calloc(1, strlen(cuvant));
   // infocuv->count = 1;
@@ -81,26 +81,27 @@ int InserareEl(TH*a, void *ae, TFCmp fcmpAlf, TFCmp fcmpLen, TFHash fh) {
       return 0;
     }
     a->v[fh(cuvant)]->urm = NULL;
-    printf("Nu exista el\n");
+    printf(" nue lma: %s\n", cuvant);
     TMic *infocuv = (TMic*)calloc(1, sizeof(TMic));
     infocuv->word = (char*)calloc(1, strlen(cuvant));
     infocuv->count = 1;
     strcpy(infocuv->word, cuvant);
     TMare * pointerUseless = (TMare*) a->v[fh(cuvant)]->info;   // alocare info pentru lista #2
     if(!Ins_IncLG(&(pointerUseless->l), (TMic*)infocuv)) {
-      printf("Aci\n");
+      //printf("Aci\n");
       free(pointerUseless);
       return 0;
     }
-    printf("Ori aci\n");
+  //  printf("Ori aci\n");
     // pointerUseless = NULL;
     return 1;
   } else {
+     printf("exista lma: %s", cuvant);
       TLG p = a->v[fh(cuvant)];
-      int ji = 0;
+    //  int ji = 0;
       for(; p != NULL; p = p->urm) {
         // printf("\nji - %d\n", ji);
-        ji++;
+      //  ji++;
         TMare *ponterMare = (TMare*)(p->info);
       //  printf("\n cv \n");
         if (ponterMare->lenght < (int)strlen(cuvant)) {
@@ -319,8 +320,8 @@ int bobelsort(TLG *l) {
 }
 
 int main(int argc, char *argv[]) {
-  TH h;
-  h = *InitTH('Z' - 'A', codHash);
+  TH *h;
+  h = InitTH('Z' - 'A', codHash);
   FILE *input;
   input = fopen(argv[1], "r");
 
@@ -345,7 +346,7 @@ int main(int argc, char *argv[]) {
     // }
     // contor1 = 0;
     while (cuvant[contor1]) {
-      printf("%d - %s\n", contor1, cuvant[contor1]);
+    //  printf("%d - %s\n", contor1, cuvant[contor1]);
       if(contor1 == 0) {
         contor1++;
         cuvant[contor1]=strtok(NULL, " .,");
@@ -361,7 +362,7 @@ int main(int argc, char *argv[]) {
             continue;
           }
 
-          printf("|%d\n", contor1);
+          // printf("|%d\n", contor1);
           if(!InserareEl(&h, cuvant[contor1], cmpAlf, cmpLen, codHash)) {
             printf("Inserare nereușita\n");
             return -1;
@@ -372,6 +373,7 @@ int main(int argc, char *argv[]) {
       // start print block
 
       if (strcmp(cuvant[0], "print") == 0) {
+        newAfiTH(h);
         continue;
         contor1++;
         cuvant[contor1]=strtok(NULL, " .,");
