@@ -23,6 +23,7 @@ int cmpAlf(void *, void *);
 void AfiMic(TMic*);
 void AfiMare(TMare*);
 void newAfiTH(TH*);
+void bobelsort(TLG *);
 
 
 int codHash(void * element) {
@@ -52,7 +53,7 @@ void AfiMare(TMare *cel) {
 		if(u->urm && u->urm->info)
 			printf(", ");
 	}
-   	printf(") ");
+   	printf(")");
 	// if(!u->urm)
 	// 	printf(")");
 	// else
@@ -82,7 +83,7 @@ void newAfiTH(TH* ah)  //,TF AfiMare)
 
 int InserareEl(TH*a, void *ae, TFHash fh) {
   char * cuvant = (char*)ae;
-      printf("\n|%s|\n", cuvant);
+  //    printf("\n|%s|\n", cuvant);
 
   if (!a->v[fh(cuvant)]) { // daca nu exista lista mare
     TMare *element = (TMare*)calloc(1, sizeof(TMare));
@@ -91,7 +92,7 @@ int InserareEl(TH*a, void *ae, TFHash fh) {
     if(!Ins_IncLG(&a->v[fh(cuvant)], (TMare*)element)) {
       return 0;
     }
-    printf("nue lma: %s\n", cuvant);
+  //  printf("nue lma: %s\n", cuvant);
 
     TMare * pointerUseless = (TMare*) a->v[fh(cuvant)]->info;   // alocare info pentru lista #2
     if(!Ins_IncLG(&(pointerUseless->l), alocMic(cuvant))) {
@@ -103,7 +104,7 @@ int InserareEl(TH*a, void *ae, TFHash fh) {
     // pointerUseless = NULL;
     return 1;
   } else {
-     printf("exista lma: %s\n", cuvant);
+//     printf("exista lma: %s\n", cuvant);
       TLG p = a->v[fh(cuvant)];
     //  int ji = 0;
       for(; p != NULL; p = p->urm) {
@@ -112,7 +113,7 @@ int InserareEl(TH*a, void *ae, TFHash fh) {
         TMare *ponterMare = (TMare*)(p->info);
       //  printf("\n cv \n");
         if (ponterMare->lenght < (int)strlen(cuvant)) {
-          printf("mai mare\n");
+//          printf("mai mare\n");
           if(!p->urm) {
             TMare *element = (TMare*)calloc(1, sizeof(TMare));
             element->lenght = strlen(cuvant);
@@ -129,7 +130,7 @@ int InserareEl(TH*a, void *ae, TFHash fh) {
                 TMare *pointer2 = (TMare*)p->urm->info;
                 // ponterMare = (TMare*)p->urm->info;
                 if(pointer2->lenght > (int)strlen(cuvant)) {
-                  printf("mai mic/e: %s\n", cuvant);
+  //                printf("mai mic/e: %s\n", cuvant);
                   TMare *element = (TMare*)calloc(1, sizeof(TMare));
                   element->lenght = strlen(cuvant);
                   if(!Ins_IncLG(&(element->l), alocMic(cuvant)))
@@ -142,7 +143,7 @@ int InserareEl(TH*a, void *ae, TFHash fh) {
                     continue;
             }
     }  else if (ponterMare->lenght > (int)strlen(cuvant)) {
-      printf("mai mic: %s\n", cuvant);
+//      printf("mai mic: %s\n", cuvant);
   //    printf("mai mare?\n");
     //  printf("Func 9?\n");
       // TMic *infocuv = (TMic*)calloc(1, sizeof(TMic));
@@ -159,81 +160,44 @@ int InserareEl(TH*a, void *ae, TFHash fh) {
         return 0;
       }
       // a->v[fh(cuvant)]->urm = NULL;
-      printf("nue lma: %s\n", cuvant);
+  //    printf("nue lma: %s\n", cuvant);
       TMare * pointerUseless = (TMare*) a->v[fh(cuvant)]->info;   // alocare info pentru lista #2
       if(!Ins_IncLG(&(pointerUseless->l), alocMic(cuvant))) {
         //printf("Aci\n");
         free(pointerUseless);
         return 0;
       }
-
-
-      // TMare *element = (TMare*)calloc(1, sizeof(TMare));
-      // element->lenght = (int)strlen(cuvant);
-      // element->l = (TLG)calloc(1, sizeof(TLG));  // alocare info lista #!
-      // if(!Ins_IncLG(&a->v[fh(cuvant)], (TMare*)element)) {
-      //   return 0;
-      // }
-      // // a->v[fh(cuvant)]->urm = NULL;
-      // // printf("nue lma: %s\n", cuvant);
-      // TMic *infocuv = (TMic*)calloc(1, sizeof(TMic));
-      // infocuv->word = (char*)calloc(1, strlen(cuvant));
-      // infocuv->count = 1;
-      // strcpy(infocuv->word, cuvant);
-      // TMare * pointerUseless = (TMare*) a->v[fh(cuvant)]->info;   // alocare info pentru lista #2
-      // if(!Ins_IncLG(&(pointerUseless->l), (TMic*)infocuv)) {
-      //   //printf("Aci\n");
-      //   free(pointerUseless);
-      //   return 0;
-      // }
-      // printf("\n////TESTARE////\n");
-      // for(; p != NULL;p = p->urm) {
-      // printf("1Adr:%p ",p);
-      // AfiMare(p->info);
-      // }
-      // p = a->v[fh(cuvant)];
-      // printf("|");
-      // if(!Ins_IncLG(&(element->l), infocuv))
-      //   return 0;
-      // if(!Ins_IncLG(&p, element))
-      //   return 0;
-      // p = a->v[fh(cuvant)];
-      // for(; p != NULL;p = p->urm) {
-      // printf("2Adr:%p ",p);
-      // AfiMare(p->info);
-      // }
-      // printf("\n////TESTARE////\n");
       return 1;
     } else {
 
 
-      printf("egal: %s\n", cuvant);
+  //    printf("egal: %s\n", cuvant);
   //    printf("egal?\n");
       TLG u = (TLG)ponterMare->l;
       TLG ant = (TLG)ponterMare->l;
 
 
       TMic *ponterMic = (TMic*)(u->info);
-     printf("\n|1TEST||%p|TEST|\n",u->urm);
+  //   printf("\n|1TEST||%p|TEST|\n",u->urm);
       int ji = 0;
-      printf("ant-initial: %p u-initial: %p",ant, u);
+  //    printf("ant-initial: %p u-initial: %p",ant, u);
       for(;u != NULL; u = u->urm) {
         if(ant != u)
           ant->urm = u;
-        printf("etapa %d\n", ji);
+  //      printf("etapa %d\n", ji);
   //      printf("\n|TEST||%p %p %p|TEST|\n", u, u->info, u->urm);
         ponterMic = (TMic*)(u->info);
-        printf("\ncuvant: %s\n", ponterMic->word);
+  //      printf("\ncuvant: %s\n", ponterMic->word);
   //      printf("%s - poate? - %s\n", ponterMic->word, cuvant);
         if(strcmp(ponterMic->word, cuvant) == 0) {
-          printf("egal/e: %s\n", cuvant);
+    //      printf("egal/e: %s\n", cuvant);
           ponterMic->count++;
           return 1;
         }
 
       }
-      printf("ant-final: %p u-final: %p",ant, u);
-      printf("egal/nu e: %s\n", cuvant);
+    //  printf("ant-final: %p u-final: %p",ant, u);
+  //    printf("egal/nu  e: %s\n", cuvant);
     //  TLG pozInitiala = (TLG)ponterMare->l;
       if(!InsLG(&ant, alocMic(cuvant)))
           return 0;
@@ -289,20 +253,37 @@ int CapatulPuterilor(TLG u, char *cuvant, int *contor) {
   return 0;
 }
 
-int bobelsort(TLG *l) {
-  TLG p = *l, ant = *l, aux;
-  int ok = 0;
+void sortAux(TH *h) {
+    for(int i = 0; i < (int)h->M; i++) {
+      TLG pPrincipal = h->v[i];
+      if(pPrincipal) {
+        for(;pPrincipal != NULL; pPrincipal = pPrincipal->urm) {
+          TMare *pInfoMare = (TMare*) pPrincipal->info;
+          TLG u = (TLG) pInfoMare->l;
+          bobelsort(&u);
+        }
+      }
+    }
+    return;
+}
 
-  while(!ok) {
+void bobelsort(TLG *l) {
+  TLG p = *l, ant = *l, aux;
+  int conditie = 0;
+
+  while(!conditie) {
     ant = *l;
     p = *l;
     for(;p != NULL && p->urm != NULL; p = p->urm) {
-      TMic *infoActual = (TMic*)p->info;
-      TMic *infoUrm = (TMic*)p->urm->info;
+
       if(ant == p)
         continue;
       else
         ant->urm = p;
+
+      TMic *infoActual = (TMic*)p->info;
+      TMic *infoUrm = (TMic*)p->urm->info;
+
       if(infoActual->count < infoUrm->count) {
 
         ant->urm = p->urm;
@@ -312,7 +293,7 @@ int bobelsort(TLG *l) {
 
       } else if(infoActual->count == infoUrm->count)  {
         if(strcmp(infoActual->word, infoUrm->word) < 0) {
-          ok = 1;
+          conditie = 1;
         } else {
           ant->urm = p->urm;
           aux = p->urm->urm;
@@ -321,10 +302,10 @@ int bobelsort(TLG *l) {
         }
 
       } else if (infoActual->count > infoUrm->count)
-        ok = 1;
+        conditie = 1;
     }
   }
-  return 1;
+  return;
 }
 
 int main(int argc, char *argv[]) {
@@ -381,6 +362,7 @@ int main(int argc, char *argv[]) {
       // start print block
 
       if (strcmp(cuvant[0], "print") == 0) {
+       sortAux(h);
         newAfiTH(h);
         contor1++;
         cuvant[contor1]=strtok(NULL, " .,");
