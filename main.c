@@ -20,9 +20,9 @@ typedef struct {
 TMic *alocMic(char*);
 int cmpLen(void *, void *);
 int cmpAlf(void *, void *);
-void AfiMic(TMic*);
-void AfiMare(TMare*);
-void newAfiTH(TH*);
+void AfiMic(TMic*, u_int);
+void AfiMare(TMare*, u_int);
+void newAfiTH(TH*, int, u_int);
 void bobelsort(TLG *);
 void swap(TLG, TLG);
 
@@ -39,10 +39,11 @@ int codHash(void * element) {
   }
 }
 
-void AfiMic(TMic *cel) {
-	printf("%s/%i", cel->word, cel->count);
+void AfiMic(TMic *cel, u_int argument2) {
+  if ((u_int)cel->count <= argument2)
+	 printf("%s/%i", cel->word, cel->count);
 }
-void AfiMare(TMare *cel) {
+void AfiMare(TMare *cel, u_int argument2) {
   // printf("nununu\n");
 	printf("(%i:", cel->lenght);
 	TLG u = cel->l;
@@ -50,7 +51,7 @@ void AfiMare(TMare *cel) {
 	for(; u != NULL; u = u->urm) {
     // printf("\n ceva \n");
     //if(u->info)
-		  AfiMic(u->info);
+		AfiMic(u->info, argument2);
 		if(u->urm && u->urm->info)
 			printf(", ");
 	}
@@ -61,10 +62,10 @@ void AfiMare(TMare *cel) {
 	// 	printf(") ");
 }
 
-void newAfiTH(TH* ah)  //,TF AfiMare)
+void newAfiTH(TH* ah, int argument1, u_int argument2)  //,TF AfiMare)
 {
     TLG p, el;
-    for(int i = 0; i < (int)ah->M; i++) {
+    for(int i = 0; i < argument1; i++) {
         p = ah->v[i];
       //  printf("%p\n", p);
         if(p) {
@@ -73,7 +74,7 @@ void newAfiTH(TH* ah)  //,TF AfiMare)
             // printf("\nweee\n");
             for(el = p; el != NULL; el = el->urm) {
         //      printf("dadada\n");
-              AfiMare(el->info);
+              AfiMare(el->info, argument2);
             }
 
 
@@ -244,7 +245,7 @@ void sortAux(TH *h) {
 }
 
 void swap(TLG a, TLG b) {
-//    printf("Da\n");
+  //  printf("Da\n");
     TMic *temp = (TMic*)calloc(1, sizeof(TMic));
 //    printf("1\n");
     TMic *infoa = (TMic*)a->info;
@@ -258,15 +259,13 @@ void swap(TLG a, TLG b) {
     strcpy(temp->word, infoa->word);
 //    printf("5\n");
     infoa->count = infob->count;
-  //  printf("6\n");
-    infoa->word = (char*)calloc(1, max);
+//    printf("6\n");
     strcpy(infoa->word, infob->word);
-  //  printf("7\n");
+//    printf("7\n");
     infob->count = temp->count;
-  //  printf("8\n");
-    infob->word = (char*)calloc(1, max);
+//    printf("8\n");
     strcpy(infob->word, temp->word);
-//    printf("9\n");
+//   printf("9\n");
 //    printf("Da\n");
 }
 
@@ -284,6 +283,7 @@ void bobelsort(TLG *l) {
         if (infoActual->count < infoUrm->count) {
             swap(p, p->urm);
             conditie = 1;
+
         } else if (infoActual->count == infoUrm->count) {
           if (strcmp(infoActual->word,infoUrm->word) > 0) {
             swap(p, p->urm);
@@ -425,8 +425,23 @@ int main(int argc, char *argv[]) {
       // start print block
 
       if (strcmp(cuvant[0], "print") == 0) {
-        sortAux(h);
-        newAfiTH(h);
+        int argument1 = h->M;
+        u_int argument2 = ~0;
+         sortAux(h);
+         if(argc == 3) {
+           if(*cuvant[1] - 'a' <= 26 && *cuvant[1] - 'a' >= 0)
+             argument1 = (int)(*cuvant[1] - 'a');
+          else if (*cuvant[1] - 'A' <= 26 && *cuvant[1] - 'A' >= 0)
+            argument1 = (int)(*cuvant[1] - 'A');
+          else if (*cuvant[1] - '0' <= 9 && *cuvant[1] - '0' >= 0)
+            argument2 = atoi(cuvant[1]);
+          else
+            return 1;
+        } else if (argc == 4) {
+          argument1 = (int)(*cuvant[1] - 'a');
+          argument2 = atoi(cuvant[2]);
+         }
+        newAfiTH(h, argument1, argument2);
         contor1++;
         cuvant[contor1]=strtok(NULL, " .,");
         continue;
