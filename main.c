@@ -125,18 +125,15 @@ void newAfiTH(TH* ah, int argument1, int argument2, int argument3)  //,TF AfiMar
                   // if(!flag)
                   //   break;
                 }
-     } else if (argument1 == 0 && argument2 == -1) {
+     } else if (argument1 >= 0 && argument1 <= (int)ah->M && argument2 == -1) {
+
 
           p = ah->v[argument1];
         //  printf("%p\n", p);
           if(p) {
             //  printf("dadada\n");
-            if(flag == 1 && argument2 == -1) {
-              printf("pos %d: ",argument1);
-            }
-            else if (flag == 1 && argument2 != -1) {
-              printf("pos%d: ",argument1);
-            }
+
+
             for(el = p; el != NULL; el = el->urm) {
           //      printf("dadada\n");
               if(argument3 > 0) {
@@ -543,7 +540,10 @@ int main(int argc, char *argv[]) {
           else
             return 1;
         } else if (contor1 == 3) {
-          argument1 = (int)(*cuvant[1] - 'a');
+          if (*cuvant[1] - 'a' <= 26 && *cuvant[1] - 'a' >= 0)
+            argument1 = (int)(*cuvant[1] - 'a');
+          else if (*cuvant[1] - 'A' <= 26 && *cuvant[1] - 'A' >= 0)
+            argument1 = (int)(*cuvant[1] - 'A');
           argument3 = atoi(cuvant[2]);
       //    printf("|%d %d|\n", argument1, argument3);
          }
