@@ -20,9 +20,9 @@ typedef struct {
 TMic *alocMic(char*);
 int cmpLen(void *, void *);
 int cmpAlf(void *, void *);
-void AfiMic(TMic*, u_int);
-void AfiMare(TMare*, u_int);
-void newAfiTH(TH*, int, u_int);
+void AfiMic(TMic*, int);
+void AfiMare(TMare*, int, int);
+void newAfiTH(TH*, int, int, int);
 void bobelsort(TLG *);
 void swap(TLG, TLG);
 
@@ -39,48 +39,138 @@ int codHash(void * element) {
   }
 }
 
-void AfiMic(TMic *cel, u_int argument2) {
-  if ((u_int)cel->count <= argument2)
-	 printf("%s/%i", cel->word, cel->count);
+void AfiMic(TMic *cel, int argument2) {
+ // printf("        afimic %d          ", argument2);
+  if (argument2 < 0) {
+    printf("%s/%i", cel->word, cel->count);
+  }
+  else {
+    if (cel->count <= argument2)
+	     printf("%s/%i", cel->word, cel->count);
+  }
 }
-void AfiMare(TMare *cel, u_int argument2) {
+void AfiMare(TMare *cel, int argument2, int argument3) {
   // printf("nununu\n");
-	printf("(%i:", cel->lenght);
-	TLG u = cel->l;
+  	TLG u = cel->l;
   // printf("n-am idee\n");
-	for(; u != NULL; u = u->urm) {
-    // printf("\n ceva \n");
-    //if(u->info)
-		AfiMic(u->info, argument2);
-		if(u->urm && u->urm->info)
-			printf(", ");
-	}
-   	printf(")");
+  if (argument2 == -1) {
+      printf("(%i:", cel->lenght);
+    	for(; u != NULL; u = u->urm) {
+        // printf("\n ceva \n");
+        //if(u->info)
+    		AfiMic(u->info, argument2);
+    		if(u->urm && u->urm->info)
+    			printf(", ");
+    	}
+     	printf(")");
+  } else {
+    TLG start = u;
+    int flag = 0;
+    for(; start != NULL; start = start->urm) {
+      TMic *pMic = (TMic*)start->info;
+      if (pMic->count <= argument2)
+        flag = 1;
+    }
+        if (flag) {
+        printf("(%i: ", cel->lenght);
+        for(; u != NULL; u = u->urm) {
+          TMic *pMic = (TMic*)u->info;
+          if (pMic->count <= argument2) {
+            AfiMic(u->info, argument2);
+            if(u->urm && u->urm->info) {
+              TMic *pMicUrm = (TMic*)u->urm->info;
+              if (pMicUrm->count <= argument2)
+                printf(", ");
+              }
+            }
+              }
+          printf(")");
+          }
+     }
+
+
 	// if(!u->urm)
 	// 	printf(")");
 	// else
 	// 	printf(") ");
 }
 
-void newAfiTH(TH* ah, int argument1, u_int argument2)  //,TF AfiMare)
+void newAfiTH(TH* ah, int argument1, int argument2, int argument3)  //,TF AfiMare)
 {
     TLG p, el;
+    int flag = 0;
+    if (argument1 == -1 && argument2 == -1) {
+            argument1 = ah->M;
+            flag = 1;
+
+            for(int i = 0; i < argument1; i++) {
+                p = ah->v[i];
+              //  printf("%p\n", p);
+                if(p) {
+                  //  printf("dadada\n");
+                    printf("pos %d: ",i);
+                  for(el = p; el != NULL; el = el->urm) {
+                //    //      printf("dadada\n");
+                    if(argument3 > 0) {
+                      TMare *pMare = (TMare*)el->info;
+                      if(pMare->lenght == argument3)
+                        AfiMare(el->info, argument2, argument3);
+                      else
+                        continue;
+                    } else
+                        AfiMare(el->info, argument2, argument3);
+                    }
+                    printf("\n");
+                  }
+                  // if(!flag)
+                  //   break;
+                }
+     } else if (argument1 == 0 && argument2 == -1) {
+
+          p = ah->v[argument1];
+        //  printf("%p\n", p);
+          if(p) {
+            //  printf("dadada\n");
+            if(flag == 1 && argument2 == -1) {
+              printf("pos %d: ",argument1);
+            }
+            else if (flag == 1 && argument2 != -1) {
+              printf("pos%d: ",argument1);
+            }
+            for(el = p; el != NULL; el = el->urm) {
+          //      printf("dadada\n");
+              if(argument3 > 0) {
+                TMare *pMare = (TMare*)el->info;
+                if(pMare->lenght == argument3)
+                  AfiMare(el->info, argument2, argument3);
+                else
+                  continue;
+              } else
+                  AfiMare(el->info, argument2, argument3);
+              }
+              printf("\n");
+    }
+  } else if (argument1 == -1 && argument2 != -1) {
+      argument1 = ah->M;
+      flag = 1;
     for(int i = 0; i < argument1; i++) {
         p = ah->v[i];
+        flag = 1;
       //  printf("%p\n", p);
         if(p) {
           //  printf("dadada\n");
-            printf("pos %d: ",i);
-            // printf("\nweee\n");
-            for(el = p; el != NULL; el = el->urm) {
-        //      printf("dadada\n");
-              AfiMare(el->info, argument2);
+            printf("pos%d: ",i);
+          for(el = p; el != NULL; el = el->urm) {
+
+                AfiMare(el->info, argument2, argument3);
             }
-
-
             printf("\n");
+          }
+          // if(!flag)
+          //   break;
         }
-    }
+}
+
 }
 
 int InserareEl(TH*a, void *ae, TFHash fh) {
@@ -425,23 +515,40 @@ int main(int argc, char *argv[]) {
       // start print block
 
       if (strcmp(cuvant[0], "print") == 0) {
-        int argument1 = h->M;
-        u_int argument2 = ~0;
+
+        while (cuvant[contor1]) {
+          contor1++;
+          cuvant[contor1]=strtok(NULL, " .,");
+        }
+
+        // int argument1 = h->M;
+        // u_int argument2 = ~0;
+        int argument1 = -1;
+        int argument2 = -1;
+        int argument3 = -1;
          sortAux(h);
-         if(argc == 3) {
-           if(*cuvant[1] - 'a' <= 26 && *cuvant[1] - 'a' >= 0)
+         if(contor1 == 2) {
+           if(*cuvant[1] - 'a' <= 26 && *cuvant[1] - 'a' >= 0) {
              argument1 = (int)(*cuvant[1] - 'a');
-          else if (*cuvant[1] - 'A' <= 26 && *cuvant[1] - 'A' >= 0)
+        //     printf("a2, arg1 : %d\n", argument1);
+            }
+          else if (*cuvant[1] - 'A' <= 26 && *cuvant[1] - 'A' >= 0) {
             argument1 = (int)(*cuvant[1] - 'A');
-          else if (*cuvant[1] - '0' <= 9 && *cuvant[1] - '0' >= 0)
+      //      printf("A2, arg1 : %d\n", argument1);
+            }
+          else if (*cuvant[1] - '0' <= 9 && *cuvant[1] - '0' >= 0) {
             argument2 = atoi(cuvant[1]);
+        //    printf("A2, arg2 : %d\n", argument2);
+            }
           else
             return 1;
-        } else if (argc == 4) {
+        } else if (contor1 == 3) {
           argument1 = (int)(*cuvant[1] - 'a');
-          argument2 = atoi(cuvant[2]);
+          argument3 = atoi(cuvant[2]);
+      //    printf("|%d %d|\n", argument1, argument3);
          }
-        newAfiTH(h, argument1, argument2);
+      //  printf("\napel %d %d %d\n", argument1, argument2, argument3);
+        newAfiTH(h, argument1, argument2, argument3);
         contor1++;
         cuvant[contor1]=strtok(NULL, " .,");
         continue;
