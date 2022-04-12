@@ -1,9 +1,10 @@
+/* BĂROIU Andrei - 312CB */
 /*--- functiiLG.c -- operatii de baza pentru lista simplu inlantuita generica---*/
 #include "tlg.h"
 
 int Ins_IncLG(TLG* aL, void* ae)
 {
-	TLG aux = (TLG)malloc(sizeof(TCelulaG));
+	TLG aux = (TLG)calloc(1,sizeof(TCelulaG));
 	if(!aux)
 	    return 0;
 
@@ -15,7 +16,7 @@ int Ins_IncLG(TLG* aL, void* ae)
 }
 
 int InsLG(TLG *aL, void *ae) {
-	TLG aux = (TLG)malloc(sizeof(TCelulaG));
+	TLG aux = (TLG)calloc(1, sizeof(TCelulaG));
 	if(!aux)
 			return 0;
 	aux->info = ae;

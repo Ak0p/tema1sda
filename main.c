@@ -1,3 +1,4 @@
+/* BĂROIU Andrei - 312CB */
 #include <stdio.h>
 #include "tlg.h"
 #include "thash.h"
@@ -265,16 +266,6 @@ int InserareEl(TH*a, void *ae, TFHash fh) {
                     continue;
             }
     }  else if (ponterMare->lenght > (int)strlen(cuvant)) {
-//      printf("mai mic: %s\n", cuvant);
-  //    printf("mai mare?\n");
-    //  printf("Func 9?\n");
-      // TMic *infocuv = (TMic*)calloc(1, sizeof(TMic));
-      // infocuv->word = (char*)calloc(1, strlen(cuvant));
-      // infocuv->count = 1;
-      // strcpy(infocuv->word, cuvant);   // alocare info pentru lista #2
-      // TMare *element = (TMare*)calloc(1, sizeof(TMare));
-      // element->lenght = strlen(infocuv->word);
-      // element->l = (TLG)calloc(1, sizeof(TLG));  // alocare info lista #!
 
       TMare *element = (TMare*)calloc(1, sizeof(TMare));
       element->lenght = (int)strlen(cuvant);
@@ -497,7 +488,7 @@ int main(int argc, char *argv[]) {
     // for(int i = 0; i < contor1; i++)
     //   free(cuvant[i]);
   }
-  DistrTH(&h, );
+//c  DistrTH(&h, );
   fclose(input);
   return 0;
 }
