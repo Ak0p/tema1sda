@@ -95,6 +95,28 @@ void AfiMare(TMare *cel, int argument2, int argument3) {
 	// 	printf(") ");
 }
 
+int searchCount(TLG l, int argument2) {
+  TLG q = l;
+  for(;q != NULL; q = q->urm) {
+    TMic *pCheck = (TMic*)q->info;
+  //  printf("\n%d\n", pCheck->count);
+    if(pCheck->count <= argument2)
+      return 1;
+  }
+  return 0;
+}
+
+int searchLenght(TLG l, int argument3) {
+  TLG q = l;
+  for(;q != NULL; q = q->urm) {
+    TMare *pCheck = (TMare*)q->info;
+  //  printf("\n%d\n", pCheck->count);
+    if(pCheck->lenght == argument3)
+      return 1;
+  }
+  return 0;
+}
+
 void newAfiTH(TH* ah, int argument1, int argument2, int argument3)  //,TF AfiMare)
 {
     TLG p, el;
@@ -145,7 +167,8 @@ void newAfiTH(TH* ah, int argument1, int argument2, int argument3)  //,TF AfiMar
               } else
                   AfiMare(el->info, argument2, argument3);
               }
-              printf("\n");
+              if(searchLenght(p, argument3))
+                printf("\n");
     }
   } else if (argument1 == -1 && argument2 != -1) {
       argument1 = ah->M;
@@ -155,13 +178,23 @@ void newAfiTH(TH* ah, int argument1, int argument2, int argument3)  //,TF AfiMar
         flag = 1;
       //  printf("%p\n", p);
         if(p) {
-          //  printf("dadada\n");
+          TLG pion = p;
+          int flag2 = 0;
+          for(; pion != NULL; pion = pion->urm) {
+            TMare *pMare = (TMare*)pion->info;
+            if(searchCount(pMare->l, argument2)) {
+              flag2 = 1;
+            }
+          }
+    //      printf("Eu %d\n", flag2);
+          if(flag2) {
             printf("pos%d: ",i);
           for(el = p; el != NULL; el = el->urm) {
 
                 AfiMare(el->info, argument2, argument3);
             }
             printf("\n");
+            }
           }
           // if(!flag)
           //   break;
@@ -460,7 +493,7 @@ void bobelsort(TLG *l) {
 
 int main(int argc, char *argv[]) {
   TH *h = NULL;
-  h = InitTH('Z' - 'A', codHash);
+  h = InitTH('Z' - 'A' + 1 , codHash);
   FILE *input;
   input = fopen(argv[1], "r");
 
