@@ -21,7 +21,7 @@ TMic *alocMic(char*);
 int cmpLen(void *, void *);
 int cmpAlf(void *, void *);
 void AfiMic(TMic*, int);
-void AfiMare(TMare*, int, int);
+void AfiMare(TMare*, int);
 void newAfiTH(TH*, int, int, int);
 void bobelsort(TLG *);
 void swap(TLG, TLG);
@@ -49,7 +49,7 @@ void AfiMic(TMic *cel, int argument2) {
 	     printf("%s/%i", cel->word, cel->count);
   }
 }
-void AfiMare(TMare *cel, int argument2, int argument3) {
+void AfiMare(TMare *cel, int argument2) {
   // printf("nununu\n");
   	TLG u = cel->l;
   // printf("n-am idee\n");
@@ -136,11 +136,11 @@ void newAfiTH(TH* ah, int argument1, int argument2, int argument3)  //,TF AfiMar
                     if(argument3 > 0) {
                       TMare *pMare = (TMare*)el->info;
                       if(pMare->lenght == argument3)
-                        AfiMare(el->info, argument2, argument3);
+                        AfiMare(el->info, argument2);
                       else
                         continue;
                     } else
-                        AfiMare(el->info, argument2, argument3);
+                        AfiMare(el->info, argument2);
                     }
                     printf("\n");
                   }
@@ -161,11 +161,11 @@ void newAfiTH(TH* ah, int argument1, int argument2, int argument3)  //,TF AfiMar
               if(argument3 > 0) {
                 TMare *pMare = (TMare*)el->info;
                 if(pMare->lenght == argument3)
-                  AfiMare(el->info, argument2, argument3);
+                  AfiMare(el->info, argument2);
                 else
                   continue;
               } else
-                  AfiMare(el->info, argument2, argument3);
+                  AfiMare(el->info, argument2);
               }
               if(searchLenght(p, argument3))
                 printf("\n");
@@ -191,7 +191,7 @@ void newAfiTH(TH* ah, int argument1, int argument2, int argument3)  //,TF AfiMar
             printf("pos%d: ",i);
           for(el = p; el != NULL; el = el->urm) {
 
-                AfiMare(el->info, argument2, argument3);
+                AfiMare(el->info, argument2);
             }
             printf("\n");
             }
@@ -327,17 +327,6 @@ TMic *alocMic(char * cuvant) {
   return infocuv;
 }
 
-
-// int cmpLen(void * e1, void * e2) {
-// 	TMic * info1 = (TMic *) e1;
-// 	TMic * info2 = (TMic *) e2;
-//
-// 	if (strlen(info1) - strlen(info2) != 0)
-// 		return 0;
-//
-// 	return 1;
-// }
-
 int cmpAlf(void * e1, void * e2) {
 	TMic * info1 = (TMic *) e1;
 	char * info2 = (char *) e2;
@@ -365,36 +354,32 @@ void sortAux(TH *h) {
 }
 
 void swap(TLG a, TLG b) {
-  //  printf("Da\n");
+
     TMic *temp = (TMic*)calloc(1, sizeof(TMic));
-//    printf("1\n");
     TMic *infoa = (TMic*)a->info;
-//    printf("2\n");
     TMic *infob = (TMic*)b->info;
     int max = infob->count - infoa->count > 0 ? infob->count : infoa->count;
-//    printf("3\n");
+
     temp->count = infoa->count;
-//    printf("4\n");
+
     temp->word = (char*)calloc(1, max);
     strcpy(temp->word, infoa->word);
-//    printf("5\n");
+
     infoa->count = infob->count;
-//    printf("6\n");
     strcpy(infoa->word, infob->word);
-//    printf("7\n");
+
     infob->count = temp->count;
-//    printf("8\n");
     strcpy(infob->word, temp->word);
-//   printf("9\n");
-//    printf("Da\n");
 }
 
 void bobelsort(TLG *l) {
   TLG p , ant = NULL;
-  int conditie = 0;
-  do {
+  int conditie = 1;
+
+
+while (conditie) {
+      p = *l;
     conditie = 0;
-    p = *l;
     while (p->urm != NULL) {
           TMic *infoActual = (TMic*)p->info;
     //      printf("|111%s|\n", infoActual->word);
@@ -414,81 +399,6 @@ void bobelsort(TLG *l) {
     }
     ant = p;
   }
-  while (conditie);
-
-  // while(conditie == 0) {
-  //   // printf("e\n");
-  //   ant = *l;
-  //   p = *l;
-  //   int contor = 0;
-  //   if (!p->urm)
-  //     return;
-  //   for(;p != NULL && p->urm != NULL ; p = p->urm) {
-  //      printf("%p|%p|%d\n",ant, p ,conditie);
-  //     if(contor != 0)
-  //       ant->urm = p;
-  //     TMic *infoActual = (TMic*)p->info;
-  //     printf("|%s|\n", infoActual->word);
-  //     TMic *infoUrm = (TMic*)p->urm->info;
-  //     printf("|%s|\n", infoUrm->word);
-  //
-  //     if(infoActual->count < infoUrm->count) {
-  //
-  //       printf("inv\n");
-  //       if (contor == 0) {
-  //         *l = p->urm;
-  //         aux = p->urm->urm;
-  //         p->urm->urm = p;
-  //         p->urm = aux;
-  //         break;
-  //       }
-  //       ant->urm = p->urm;
-  //       aux = p->urm->urm;
-  //       p->urm->urm = p;
-  //       p->urm = aux;
-  //       break;
-  //
-  //     } else if(infoActual->count == infoUrm->count)  {
-  //
-  //       printf("egal");
-  //
-  //       if(strcmp(infoActual->word, infoUrm->word) < 0) {
-  //
-  //         printf("-ok\n");
-  //
-  //         conditie = 1;
-  //         continue;
-  //       } else {
-  //
-  //         printf("-nu\n");
-  //
-  //         if (contor == 0) {
-  //           *l = p->urm;
-  //           aux = p->urm->urm;
-  //           p->urm->urm = p;
-  //           p->urm = aux;
-  //           break;
-  //         }
-  //
-  //         ant->urm = p->urm;
-  //         aux = p->urm->urm;
-  //         p->urm->urm = p;
-  //         p->urm = aux;
-  //
-  //         break;
-  //       }
-  //
-  //     } else if (infoActual->count > infoUrm->count) {
-  //
-  //       printf("strlen ok 3\n");
-  //
-  //       conditie = 1;
-  //       break;
-  //     }
-  //
-  //   }
-  // }
-  //return;
 }
 
 int main(int argc, char *argv[]) {
@@ -497,7 +407,7 @@ int main(int argc, char *argv[]) {
   FILE *input;
   input = fopen(argv[1], "r");
 
-  while(1) {
+  while(argc) {
     // start citire & prelucrare comanda
     char *comanda = (char*)calloc(lineSize, sizeof(char));
     char **cuvant = (char**)calloc(wordSize, sizeof(char*));
@@ -510,13 +420,7 @@ int main(int argc, char *argv[]) {
       *strrchr(comanda, '\n') = '\0';
     }
     cuvant[contor1] = strtok(comanda, " .,");
-    // while (cuvant[contor1]) {
-    //   //printf("%s\n", cuvant[contor1]);
-    //   contor1++;
-    //   cuvant[contor1]=strtok(NULL, " .,");
-    //
-    // }
-    // contor1 = 0;
+
     while (cuvant[contor1]) {
 //      printf("%d - %s\n", contor1, cuvant[contor1]);
       if(contor1 == 0 && strcmp(cuvant[0], "print")) {
@@ -589,7 +493,11 @@ int main(int argc, char *argv[]) {
       contor1++;
       cuvant[contor1]=strtok(NULL, " .,");
     }
+    free(comanda);
+    // for(int i = 0; i < contor1; i++)
+    //   free(cuvant[i]);
   }
+  DistrTH(&h, );
   fclose(input);
   return 0;
 }
